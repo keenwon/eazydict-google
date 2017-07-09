@@ -1,6 +1,8 @@
 'use strict';
 
-const fetch = require('node-fetch');
+const querystring = require('querystring');
+const fetch = require('./lib/fetch');
+const getToken = require('./lib/token');
 const parser = require('./lib/parser');
 const {
   EDOutput,
@@ -8,21 +10,38 @@ const {
 } = require('eazydict-standard-output');
 
 /**
- * 模拟浏览器的头信息
+ * 构造请求数据
  */
-/* eslint-disable max-len */
-const headers = new fetch.Headers({
-  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-  'Accept-Encoding': 'gzip, deflate',
-  'Accept-Language': 'zh-CN,zh;q=0.8',
-  'Cache-Control': 'max-age=0',
-  'Connection': 'keep-alive',
-  'Host': 'www.youdao.com',
-  'Referer': 'http://www.youdao.com/?cookie=new',
-  'Upgrade-Insecure-Requests': '1',
-  'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.104 Safari/537.36'
-});
-/* eslint-enable max-len */
+const getFetchData = (text, token) => {
+
+  /**
+   * 全中文，则翻译为英文
+   * 否则统一翻译为中文
+   */
+
+  let to = /^[\u4e00-\u9fa5]+$/.test(text)
+    ? 'en'
+    : 'zh-CN';
+
+  return {
+    client: 't',
+    sl: 'auto',
+    tl: to,
+    hl: to,
+    dt: [
+      'at', 'bd', 'ex', 'ld', 'md',
+      'qca', 'rw', 'rm', 'ss', 't'
+    ],
+    ie: 'UTF-8',
+    oe: 'UTF-8',
+    otf: 1,
+    ssel: 0,
+    tsel: 0,
+    kc: 4,
+    tk: token,
+    q: text
+  }
+};
 
 /**
  * 入口
@@ -32,14 +51,17 @@ function main(word) {
     return Promise.reject(new Error('请输入要查询的文字'));
   }
 
-  // 编码
-  let keyword = encodeURIComponent(word);
+  let fetchBody, url, api;
 
-  const url = `http://www.youdao.com/w/eng/${keyword}`;
+  return getToken(word)
+    .then(token => {
+      fetchBody = getFetchData(word, token);
+      url = `https://translate.google.com/#auto/${fetchBody.tl}/${encodeURIComponent(word)}`;
+      api = `https://translate.google.com/translate_a/single?${querystring.stringify(fetchBody)}`;
 
-  return fetch(url, { headers })
-    .then(res => res.text())
-    .then(body => parser(body))
+      return fetch(api);
+    })
+    .then(data => parser(data))
     .catch(error => {
       if (error.name === 'FetchError') {
         return new EDOutput(CODES.NETWORK_ERROR);
@@ -49,11 +71,12 @@ function main(word) {
     })
     .then(output => {
       // 添加插件信息
-      output.pluginName = 'youdao';
+      output.pluginName = 'Google';
       output.url = url;
 
       return output;
     });
+
 }
 
 module.exports = main;

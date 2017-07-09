@@ -44,8 +44,9 @@
     "proxyquire": "^1.8.0"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.2",
     "eazydict-standard-output": "^1.1.0",
-    "node-fetch": "^1.7.1"
+    "https-proxy-agent": "^2.0.0",
+    "node-fetch": "^1.7.1",
+    "socks-proxy-agent": "^3.0.0"
   }
 }
