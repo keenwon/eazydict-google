@@ -56,8 +56,8 @@ function main(word) {
   return getToken(word)
     .then(token => {
       fetchBody = getFetchData(word, token);
-      url = `https://translate.google.com/#auto/${fetchBody.tl}/${encodeURIComponent(word)}`;
-      api = `https://translate.google.com/translate_a/single?${querystring.stringify(fetchBody)}`;
+      url = `https://translate.google.cn/#auto/${fetchBody.tl}/${encodeURIComponent(word)}`;
+      api = `https://translate.google.cn/translate_a/single?${querystring.stringify(fetchBody)}`;
 
       return fetch(api);
     })
