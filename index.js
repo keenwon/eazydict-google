@@ -46,20 +46,20 @@ const getFetchData = (text, token) => {
 /**
  * 入口
  */
-function main(word) {
+function main(word, configs) {
   if (!word) {
     return Promise.reject(new Error('请输入要查询的文字'));
   }
 
   let fetchBody, url, api;
 
-  return getToken(word)
+  return getToken(word, configs)
     .then(token => {
       fetchBody = getFetchData(word, token);
       url = `https://translate.google.cn/#auto/${fetchBody.tl}/${encodeURIComponent(word)}`;
       api = `https://translate.google.cn/translate_a/single?${querystring.stringify(fetchBody)}`;
 
-      return fetch(api);
+      return fetch(api, configs);
     })
     .then(data => parser(data))
     .catch(error => {
