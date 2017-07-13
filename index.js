@@ -1,5 +1,6 @@
 'use strict';
 
+const debug = require('./lib/debug');
 const querystring = require('querystring');
 const fetch = require('./lib/fetch');
 const getToken = require('./lib/token');
@@ -47,6 +48,11 @@ const getFetchData = (text, token) => {
  * 入口
  */
 function main(word, configs) {
+  debug('run with arguments %O', {
+    word,
+    configs
+  });
+
   if (!word) {
     return Promise.reject(new Error('请输入要查询的文字'));
   }
@@ -58,6 +64,8 @@ function main(word, configs) {
       fetchBody = getFetchData(word, token);
       url = `https://translate.google.cn/#auto/${fetchBody.tl}/${encodeURIComponent(word)}`;
       api = `https://translate.google.cn/translate_a/single?${querystring.stringify(fetchBody)}`;
+
+      debug(`fetch url ${url}`);
 
       return fetch(api, configs);
     })
@@ -73,6 +81,8 @@ function main(word, configs) {
       // 添加插件信息
       output.pluginName = 'Google';
       output.url = url;
+
+      debug('output: %O', output);
 
       return output;
     });
