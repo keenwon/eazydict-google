@@ -28,7 +28,7 @@ const getFetchData = (text, token) => {
     client: 't',
     sl: 'auto',
     tl: to,
-    hl: to,
+    hl: 'zh-CN',
     dt: [
       'at', 'bd', 'ex', 'ld', 'md',
       'qca', 'rw', 'rm', 'ss', 't'
