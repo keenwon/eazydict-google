@@ -65,7 +65,8 @@ function main(word, configs) {
       url = `https://translate.google.cn/#auto/${fetchBody.tl}/${encodeURIComponent(word)}`;
       api = `https://translate.google.cn/translate_a/single?${querystring.stringify(fetchBody)}`;
 
-      debug(`fetch url ${url}`);
+      debug(`fetch url: ${url.replace(/%/g, '%%')}`);
+      debug(`fetch api: ${api.replace(/%/g, '%%')}`);
 
       return fetch(api, configs);
     })
