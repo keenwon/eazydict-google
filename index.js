@@ -47,22 +47,22 @@ const getFetchData = (text, token) => {
 /**
  * 入口
  */
-function main(word, configs) {
+function main(words, configs) {
   debug('run with arguments %O', {
-    word,
+    words,
     configs
   });
 
-  if (!word) {
+  if (!words) {
     return Promise.reject(new Error('请输入要查询的文字'));
   }
 
   let fetchBody, url, api;
 
-  return getToken(word, configs)
+  return getToken(words, configs)
     .then(token => {
-      fetchBody = getFetchData(word, token);
-      url = `https://translate.google.cn/#auto/${fetchBody.tl}/${encodeURIComponent(word)}`;
+      fetchBody = getFetchData(words, token);
+      url = `https://translate.google.cn/#auto/${fetchBody.tl}/${encodeURIComponent(words)}`;
       api = `https://translate.google.cn/translate_a/single?${querystring.stringify(fetchBody)}`;
 
       debug(`fetch url: ${url.replace(/%/g, '%%')}`);
@@ -81,6 +81,7 @@ function main(word, configs) {
     .then(output => {
       // 添加插件信息
       output.pluginName = 'Google';
+      output.words = words;
       output.url = url;
 
       debug('output: %O', output);
