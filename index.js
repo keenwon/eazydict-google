@@ -18,15 +18,25 @@ const getFetchData = (text, token) => {
   /**
    * 全中文，则翻译为英文
    * 否则统一翻译为中文
+   *
+   * 注意:
+   *
+   * 使用 auto 的时候，会识别拼音。例如 you 翻译为 “有”
+   * 所以强制设为英汉互译
    */
+  let from, to;
 
-  let to = /^[\u4e00-\u9fa5]+$/.test(text)
-    ? 'en'
-    : 'zh-CN';
+  if (/^[\u4e00-\u9fa5]+$/.test(text)) {
+    from = 'zh-CN';
+    to = 'en';
+  } else {
+    from = 'en';
+    to = 'zh-CN';
+  }
 
   return {
     client: 't',
-    sl: 'auto',
+    sl: from,
     tl: to,
     hl: 'zh-CN',
     dt: [
