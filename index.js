@@ -5,7 +5,7 @@ const querystring = require('querystring');
 const fetch = require('./lib/fetch');
 const getToken = require('./lib/token');
 const parser = require('./lib/parser');
-const defaultsDeep = require('lodash.defaultsdeep');
+const assign = require('lodash.assign');
 const defaultConfigs = require('./defaultConfig');
 const {
   EDOutput,
@@ -65,7 +65,7 @@ function main(words, userConfigs) {
     userConfigs
   });
 
-  let configs = defaultsDeep(defaultConfigs, userConfigs);
+  let configs = assign({}, defaultConfigs, userConfigs);
 
   debug('use configs %O', configs);
 
