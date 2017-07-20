@@ -30,6 +30,6 @@ module.exports = {
       phonetics: -1,
 
       // 是否显示翻译
-      translates: 4
+      translates: -1
   }
 };
