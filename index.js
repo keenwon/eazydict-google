@@ -5,6 +5,8 @@ const querystring = require('querystring');
 const fetch = require('./lib/fetch');
 const getToken = require('./lib/token');
 const parser = require('./lib/parser');
+const defaultsDeep = require('lodash.defaultsdeep');
+const defaultConfigs = require('./defaultConfig');
 const {
   EDOutput,
   CODES
@@ -57,11 +59,15 @@ const getFetchData = (text, token) => {
 /**
  * 入口
  */
-function main(words, configs) {
+function main(words, userConfigs) {
   debug('run with arguments %O', {
     words,
-    configs
+    userConfigs
   });
+
+  let configs = defaultsDeep(defaultConfigs, userConfigs);
+
+  debug('use configs %O', configs);
 
   if (!words) {
     return Promise.reject(new Error('请输入要查询的文字'));
@@ -80,7 +86,7 @@ function main(words, configs) {
 
       return fetch(api, configs);
     })
-    .then(data => parser(data))
+    .then(data => parser(data, configs))
     .catch(error => {
       if (error.name === 'FetchError') {
         return new EDOutput(CODES.NETWORK_ERROR);
