@@ -86,7 +86,7 @@ function main(words, userConfigs) {
 
       return fetch(api, configs);
     })
-    .then(data => parser(data, configs))
+    .then(data => parser(data))
     .catch(error => {
       if (error.name === 'FetchError') {
         return new EDOutput(CODES.NETWORK_ERROR);
