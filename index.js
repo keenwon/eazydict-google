@@ -28,7 +28,7 @@ const getFetchData = (text, token) => {
    */
   let from, to;
 
-  if (/^[\u4e00-\u9fa5]+$/.test(text)) {
+  if (/[\u4e00-\u9fa5]/.test(text)) {
     from = 'zh-CN';
     to = 'en';
   } else {
@@ -78,7 +78,7 @@ function main(words, userConfigs) {
   return getToken(words, configs)
     .then(token => {
       fetchBody = getFetchData(words, token);
-      url = `https://translate.google.cn/#auto/${fetchBody.tl}/${encodeURIComponent(words)}`;
+      url = `https://translate.google.cn/#${fetchBody.sl}/${fetchBody.tl}/${encodeURIComponent(words)}`;
       api = `https://translate.google.cn/translate_a/single?${querystring.stringify(fetchBody)}`;
 
       debug(`fetch url: ${url.replace(/%/g, '%%')}`);
@@ -86,7 +86,7 @@ function main(words, userConfigs) {
 
       return fetch(api, configs);
     })
-    .then(data => parser(data))
+    .then(data => parser(data, words))
     .catch(error => {
       if (error.name === 'FetchError') {
         return new EDOutput(CODES.NETWORK_ERROR);
