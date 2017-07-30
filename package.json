@@ -1,6 +1,6 @@
 {
   "name": "eazydict-google",
-  "version": "1.0.0-beta.18",
+  "version": "1.1.0",
   "description": "EazyDict Google词典插件",
   "main": "index.js",
   "scripts": {
@@ -44,7 +44,7 @@
     "proxyquire": "^1.8.0"
   },
   "dependencies": {
-    "eazydict-standard-output": "^1.5.0",
+    "eazydict-standard-output": "^1.6.0",
     "https-proxy-agent": "^2.0.0",
     "lodash.assign": "^4.2.0",
     "node-fetch": "^1.7.1",
