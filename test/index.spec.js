@@ -27,8 +27,6 @@ if (process.env.NODE_ENV === 'testing') {
 const mocha = require('mocha');
 const chai = require('chai');
 const Joi = require('joi');
-const chaiJoi = require('chai-joi');
 const chaiAsPromised = require('chai-as-promised');
 chai.should();
-chai.use(chaiJoi);
 chai.use(chaiAsPromised);
