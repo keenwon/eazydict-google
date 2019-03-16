@@ -1,23 +1,20 @@
-'use strict';
+'use strict'
 
-const debug = require('./lib/debug');
-const querystring = require('querystring');
-const fetch = require('./lib/fetch');
-const getToken = require('./lib/token');
-const parser = require('./lib/parser');
-const assign = require('lodash.assign');
-const defaultConfigs = require('./defaultConfig');
-const pkg = require('./package.json');
+const debug = require('./lib/debug')
+const querystring = require('querystring')
+const fetch = require('./lib/fetch')
+const getToken = require('./lib/token')
+const parser = require('./lib/parser')
+const assign = require('lodash.assign')
+const defaultConfigs = require('./defaultConfig')
+const pkg = require('./package.json')
 const {
   EDOutput,
   CODES
-} = require('eazydict-standard-output');
+} = require('eazydict-standard-output')
 
-/**
- * 构造请求数据
- */
+// 构造请求数据
 const getFetchData = (text, token) => {
-
   /**
    * 全中文，则翻译为英文
    * 否则统一翻译为中文
@@ -27,14 +24,14 @@ const getFetchData = (text, token) => {
    * 使用 auto 的时候，会识别拼音。例如 you 翻译为 “有”
    * 所以强制设为英汉互译
    */
-  let from, to;
+  let from, to
 
   if (/[\u4e00-\u9fa5]/.test(text)) {
-    from = 'zh-CN';
-    to = 'en';
+    from = 'zh-CN'
+    to = 'en'
   } else {
-    from = 'en';
-    to = 'zh-CN';
+    from = 'en'
+    to = 'zh-CN'
   }
 
   return {
@@ -55,68 +52,65 @@ const getFetchData = (text, token) => {
     tk: token,
     q: text
   }
-};
+}
 
-/**
- * 入口
- */
-function main(words, userConfigs) {
+// 入口
+function main (words, userConfigs) {
   debug('run with arguments %O', {
     words,
     userConfigs
-  });
+  })
 
-  let configs = assign({}, defaultConfigs, userConfigs);
+  let configs = assign({}, defaultConfigs, userConfigs)
 
-  debug('use configs %O', configs);
+  debug('use configs %O', configs)
 
   if (!words) {
-    return Promise.reject(new Error('请输入要查询的文字'));
+    return Promise.reject(new Error('请输入要查询的文字'))
   }
 
-  let fetchBody, url, api;
+  let fetchBody, url, api
 
   return getToken(words, configs)
     .then(token => {
-      fetchBody = getFetchData(words, token);
-      url = `https://translate.google.cn/#${fetchBody.sl}/${fetchBody.tl}/${encodeURIComponent(words)}`;
-      api = `https://translate.google.cn/translate_a/single?${querystring.stringify(fetchBody)}`;
+      fetchBody = getFetchData(words, token)
+      url = `https://translate.google.cn/#${fetchBody.sl}/${fetchBody.tl}/${encodeURIComponent(words)}`
+      api = `https://translate.google.cn/translate_a/single?${querystring.stringify(fetchBody)}`
 
-      debug(`fetch url: ${url.replace(/%/g, '%%')}`);
-      debug(`fetch api: ${api.replace(/%/g, '%%')}`);
+      debug(`fetch url: ${url.replace(/%/g, '%%')}`)
+      debug(`fetch api: ${api.replace(/%/g, '%%')}`)
 
-      return fetch(api, configs);
+      return fetch(api, configs)
     })
     .then(data => parser(data, words))
     .catch(error => {
       if (error.name === 'FetchError') {
-        return new EDOutput(CODES.NETWORK_ERROR);
+        return new EDOutput(CODES.NETWORK_ERROR)
       }
 
-      return new EDOutput(CODES.OTHER);
+      return new EDOutput(CODES.OTHER)
     })
     .then(output => {
       // 添加插件信息
-      output.pluginName = 'Google';
-      output.packageName = pkg.name;
-      output.words = words;
-      output.url = url;
+      output.pluginName = 'Google'
+      output.packageName = pkg.name
+      output.words = words
+      output.url = url
 
-      debug('output: %O', output);
+      debug('output: %O', output)
 
-      return output;
-    });
-
+      return output
+    })
 }
 
 if (require.main === module) {
   // istanbul ignore next
-  let word = process.argv.slice(2).join(' ');
+  let word = process.argv.slice(2).join(' ')
 
   main(word)
     .then(result => {
-      console.log(result); // eslint-disable-line no-console
-    });
+      console.log(result) // eslint-disable-line no-console
+    })
 } else {
-  module.exports = main;
+  module.exports = main
 }
