@@ -69,13 +69,15 @@ function main (words, userConfigs) {
     return Promise.reject(new Error('请输入要查询的文字'))
   }
 
+  const baseUrl = 'https://translate.google.cn'
   let fetchBody, url, api
 
   return getToken(words, configs)
     .then(token => {
       fetchBody = getFetchData(words, token)
-      url = `https://translate.google.cn/#${fetchBody.sl}/${fetchBody.tl}/${encodeURIComponent(words)}`
-      api = `https://translate.google.cn/translate_a/single?${querystring.stringify(fetchBody)}`
+
+      url = `${baseUrl}/#view=home&op=translate&sl=${fetchBody.sl}&tl=${fetchBody.tl}&text=${encodeURIComponent(words)}`
+      api = `${baseUrl}/translate_a/single?${querystring.stringify(fetchBody)}`
 
       debug(`fetch url: ${url.replace(/%/g, '%%')}`)
       debug(`fetch api: ${api.replace(/%/g, '%%')}`)
@@ -84,6 +86,8 @@ function main (words, userConfigs) {
     })
     .then(data => parser(data, words))
     .catch(error => {
+      debug(error)
+
       if (error.name === 'FetchError') {
         return new EDOutput(CODES.NETWORK_ERROR)
       }
