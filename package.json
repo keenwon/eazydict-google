@@ -19,6 +19,11 @@
   "bugs": {
     "url": "https://github.com/keenwon/eazydict-google/issues"
   },
+  "files": [
+    "lib",
+    "defaultConfig.js",
+    "index.js"
+  ],
   "keywords": [
     "eazydict",
     "dictionary",
