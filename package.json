@@ -45,7 +45,7 @@
     "joi": "^14.3.1",
     "mocha": "^6.1.4",
     "nyc": "^14.1.1",
-    "proxyquire": "^2.1.0"
+    "proxyquire": "^2.1.1"
   },
   "dependencies": {
     "eazydict-standard-output": "^1.7.2",
