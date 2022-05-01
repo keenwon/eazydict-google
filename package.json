@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "eazydict-standard-output": "^1.7.2",
-    "https-proxy-agent": "^5.0.0",
+    "https-proxy-agent": "^5.0.1",
     "lodash.assign": "^4.2.0",
     "node-fetch": "^3.2.3",
     "p-retry": "^4.6.1",
