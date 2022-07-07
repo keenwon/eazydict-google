@@ -8,10 +8,7 @@ const parser = require('./lib/parser')
 const assign = require('lodash.assign')
 const defaultConfigs = require('./defaultConfig')
 const pkg = require('./package.json')
-const {
-  EDOutput,
-  CODES
-} = require('eazydict-standard-output')
+const { EDOutput, CODES } = require('eazydict-standard-output')
 
 // 构造请求数据
 const getFetchData = (text, token) => {
@@ -39,10 +36,7 @@ const getFetchData = (text, token) => {
     sl: from,
     tl: to,
     hl: 'zh-CN',
-    dt: [
-      'at', 'bd', 'ex', 'ld', 'md',
-      'qca', 'rw', 'rm', 'ss', 't'
-    ],
+    dt: ['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't'],
     ie: 'UTF-8',
     oe: 'UTF-8',
     otf: 1,
@@ -50,18 +44,18 @@ const getFetchData = (text, token) => {
     tsel: 0,
     kc: 4,
     tk: token,
-    q: text
+    q: text,
   }
 }
 
 // 入口
-function main (words, userConfigs) {
+function main(words, userConfigs) {
   debug('run with arguments %O', {
     words,
-    userConfigs
+    userConfigs,
   })
 
-  let configs = assign({}, defaultConfigs, userConfigs)
+  const configs = assign({}, defaultConfigs, userConfigs)
 
   debug('use configs %O', configs)
 
@@ -73,10 +67,12 @@ function main (words, userConfigs) {
   let fetchBody, url, api
 
   return getToken(words, configs)
-    .then(token => {
+    .then((token) => {
       fetchBody = getFetchData(words, token)
 
-      url = `${baseUrl}/#view=home&op=translate&sl=${fetchBody.sl}&tl=${fetchBody.tl}&text=${encodeURIComponent(words)}`
+      url = `${baseUrl}/#view=home&op=translate&sl=${fetchBody.sl}&tl=${
+        fetchBody.tl
+      }&text=${encodeURIComponent(words)}`
       api = `${baseUrl}/translate_a/single?${querystring.stringify(fetchBody)}`
 
       debug(`fetch url: ${url.replace(/%/g, '%%')}`)
@@ -84,8 +80,8 @@ function main (words, userConfigs) {
 
       return fetch(api, configs)
     })
-    .then(data => parser(data, words))
-    .catch(error => {
+    .then((data) => parser(data, words))
+    .catch((error) => {
       debug(error)
 
       if (error.name === 'FetchError') {
@@ -94,7 +90,7 @@ function main (words, userConfigs) {
 
       return new EDOutput(CODES.OTHER)
     })
-    .then(output => {
+    .then((output) => {
       // 添加插件信息
       output.pluginName = 'Google'
       output.packageName = pkg.name
@@ -109,9 +105,9 @@ function main (words, userConfigs) {
 
 if (require.main === module) {
   // istanbul ignore next
-  let word = process.argv.slice(2).join(' ')
+  const word = process.argv.slice(2).join(' ')
 
-  main(word).then(result => {
+  main(word).then((result) => {
     console.log(result) // eslint-disable-line no-console
   })
 } else {
