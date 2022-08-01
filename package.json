@@ -50,7 +50,7 @@
     "eazydict-standard-output": "^1.7.2",
     "https-proxy-agent": "^5.0.1",
     "lodash.assign": "^4.2.0",
-    "node-fetch": "^3.2.6",
+    "node-fetch": "^3.2.10",
     "p-retry": "^4.6.2",
     "socks-proxy-agent": "^7.0.0"
   }
